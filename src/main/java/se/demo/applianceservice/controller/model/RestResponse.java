@@ -3,5 +3,5 @@ package se.demo.applianceservice.controller.model;
 import lombok.Builder;
 
 @Builder
-public record AppliancePingResponse(boolean connected){
+public record RestResponse(boolean success){
 }
