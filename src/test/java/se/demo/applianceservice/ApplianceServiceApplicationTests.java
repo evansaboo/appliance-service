@@ -1,0 +1,13 @@
+package se.demo.applianceservice;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class ApplianceServiceApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
