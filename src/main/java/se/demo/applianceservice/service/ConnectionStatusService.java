@@ -1,5 +1,6 @@
 package se.demo.applianceservice.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.demo.applianceservice.controller.model.ApplianceStatusResponse;
@@ -12,33 +13,44 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class ConnectionStatusService {
-
     @Autowired
     private CustomerFacade customerFacade;
     @Autowired
     private ApplianceFacade applianceFacade;
 
     public void generateCustomersAndAppliances() {
+        log.debug("generateCustomersAndAppliances().");
+
         customerFacade.createCustomerTable();
         applianceFacade.createApplianceTable();
+
+        log.debug("generateCustomersAndAppliances(), done.");
     }
 
     public void updateApplianceStatus(String applianceId) {
+        log.debug("updateApplianceStatus(), applianceId: {}", applianceId);
+
         applianceFacade.updateApplianceStatus(applianceId);
+
+        log.info("updateApplianceStatus(), done.");
     }
 
     public ApplianceStatusResponse getApplianceConnectionStatus(String applianceId) {
+        log.debug("getApplianceConnectionStatus(), applianceId: {}", applianceId);
+
         Optional<Appliance> applianceOptional = applianceFacade.getApplianceStatus(applianceId).stream().findFirst();
-
         Appliance appliance = getAppliance(applianceOptional);
-
-        return ApplianceStatusResponse.builder()
+        ApplianceStatusResponse response = ApplianceStatusResponse.builder()
                 .applianceId(appliance.applianceId())
                 .isConnected(isApplianceConnected(appliance))
                 .lastConnection(appliance.lastConnectionPing().toString())
                 .build();
+
+        log.debug("getApplianceConnectionStatus(), response: {}", response);
+        return response;
     }
 
     private Appliance getAppliance(Optional<Appliance> appliance) {

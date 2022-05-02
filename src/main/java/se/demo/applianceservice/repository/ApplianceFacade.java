@@ -1,6 +1,9 @@
 package se.demo.applianceservice.repository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
@@ -11,36 +14,50 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Repository
 public class ApplianceFacade {
 
-    String update_appliance_status_sql;
-    String get_appliance_info_sql;
+    private String createApplianceTableSql;
+    private String updateApplianceStatusSql;
+    private String getApplianceInfoSql;
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private FileReader fileReader;
 
+    @EventListener(ApplicationReadyEvent.class)
+    public void loadSqlStatements() {
+        log.info("loadSqlStatements()");
+
+        createApplianceTableSql = fileReader.readFileContent("create_appliance_table.sql");
+        updateApplianceStatusSql = fileReader.readFileContent("update_appliance_status.sql");
+        getApplianceInfoSql = fileReader.readFileContent("get_appliance_info.sql");
+
+        log.info("loadSqlStatements(), done.");
+    }
     public void createApplianceTable() {
-        /* NOTE: Fetching the content of the file from the file system for every method call is not efficient.
-        It should be loaded into the memory at application startup.
-         */
-        String sqlStatement = fileReader.readFileContent("create_appliance_table.sql");
-        jdbcTemplate.execute(sqlStatement);
+        log.info("createApplianceTable()");
+        jdbcTemplate.execute(createApplianceTableSql);
+        log.info("createApplianceTable(), done.");
     }
 
     public void updateApplianceStatus(String applianceId) {
-        String sqlStatement = fileReader.readFileContent("update_appliance_status.sql");
-
-        jdbcTemplate.update(sqlStatement, applianceId);
+        log.info("updateApplianceStatus()");
+        jdbcTemplate.update(updateApplianceStatusSql, applianceId);
+        log.info("updateApplianceStatus(), done.");
     }
 
     public List<Appliance> getApplianceStatus(String applianceId) {
-        String sqlStatement = fileReader.readFileContent("get_appliance_info.sql");
+        log.info("getApplianceStatus(), applianceId: {}", applianceId);
 
-        return jdbcTemplate.query(sqlStatement,
+        List<Appliance> appliances = jdbcTemplate.query(getApplianceInfoSql,
                 extractApplianceFromResultSet(),
                 applianceId);
+
+        log.info("getApplianceStatus(), done. appliances: {}", appliances);
+        return appliances;
     }
 
     private ResultSetExtractor<List<Appliance>> extractApplianceFromResultSet() {
@@ -56,5 +73,4 @@ public class ApplianceFacade {
             return appliances;
         };
     }
-
 }

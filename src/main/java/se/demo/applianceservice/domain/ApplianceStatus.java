@@ -5,6 +5,8 @@ import lombok.Builder;
 import java.util.Date;
 
 @Builder
-public record ApplianceStatus(String applianceId, Boolean isConnected, Date lastConnectionPing) {
+public record ApplianceStatus(String applianceId,
+                              Boolean isConnected,
+                              Date lastConnectionPing) {
 
 }
