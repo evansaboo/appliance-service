@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.demo.applianceservice.controller.model.ApplianceStatusResponse;
 import se.demo.applianceservice.domain.Appliance;
-import se.demo.applianceservice.error.EntityNotFoundException;
+import se.demo.applianceservice.exception.EntityNotFoundException;
 import se.demo.applianceservice.repository.ApplianceFacade;
 import se.demo.applianceservice.repository.CustomerFacade;
 
@@ -35,14 +35,15 @@ public class ConnectionStatusService {
 
         applianceFacade.updateApplianceStatus(applianceId);
 
-        log.info("updateApplianceStatus(), done.");
+        log.debug("updateApplianceStatus(), done.");
     }
 
     public ApplianceStatusResponse getApplianceConnectionStatus(String applianceId) {
         log.debug("getApplianceConnectionStatus(), applianceId: {}", applianceId);
 
         Optional<Appliance> applianceOptional = applianceFacade.getApplianceStatus(applianceId).stream().findFirst();
-        Appliance appliance = getAppliance(applianceOptional);
+        Appliance appliance = getAppliance(applianceOptional, applianceId);
+
         ApplianceStatusResponse response = ApplianceStatusResponse.builder()
                 .applianceId(appliance.applianceId())
                 .isConnected(isApplianceConnected(appliance))
@@ -53,17 +54,16 @@ public class ConnectionStatusService {
         return response;
     }
 
-    private Appliance getAppliance(Optional<Appliance> appliance) {
+    private Appliance getAppliance(Optional<Appliance> appliance, String applianceId) {
         if (appliance.isPresent()) {
             return appliance.get();
         } else {
-            // Should be handled by RestExceptionHandler
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException("Couldn't find appliance with ID: " + applianceId);
         }
     }
 
     /**
-     * If the appliance has not pinged for longer than 2 minutes then it's classified as disconnected.
+     * An appliance is classified as disconnected if it has not pinged for longer than 2 minutes.
      */
     private Boolean isApplianceConnected(Appliance appliance) {
         int timeInSeconds = 120;
