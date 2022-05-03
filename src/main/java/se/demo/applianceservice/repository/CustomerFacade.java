@@ -2,23 +2,34 @@ package se.demo.applianceservice.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import se.demo.applianceservice.repository.util.FileReader;
+
+import java.util.Map;
 
 @Slf4j
 @Repository
 public class CustomerFacade {
 
+    private String createCustomerTableSql;
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private NamedParameterJdbcTemplate jdbcTemplate;
     @Autowired
     private FileReader fileReader;
 
+    @EventListener(ApplicationReadyEvent.class)
+    public void loadSqlStatements() {
+        log.debug("loadSqlStatements()");
+        createCustomerTableSql = fileReader.readFileContent("create_customer_table.sql");
+        log.debug("loadSqlStatements(), done.");
+    }
+
     public void createCustomerTable() {
         log.info("createCustomerTable()");
-        String sqlStatement = fileReader.readFileContent("create_customer_table.sql");
-        jdbcTemplate.execute(sqlStatement);
+        jdbcTemplate.update(createCustomerTableSql, Map.of());
         log.info("createCustomerTable(), done.");
     }
 }

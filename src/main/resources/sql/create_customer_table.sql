@@ -5,8 +5,8 @@ ID serial PRIMARY KEY, NAME VARCHAR(50), ADDRESS VARCHAR(50), POSTAL_CODE INT, C
 );
 
 INSERT INTO
-  CUSTOMERS (ID, NAME, ADDRESS, POSTAL_CODE, CITY)
+  CUSTOMERS (NAME, ADDRESS, POSTAL_CODE, CITY)
 VALUES
-  (1,'Test AB', 'ABC123', 11111, 'Stockholm'),
-  (2,'Test1 AB', 'DEF456', 11111, 'Goteborg'),
-  (3,'Test2 AB', 'GHI789', 11111, 'Malmo');
+  ('Test AB', 'ABC123', 11111, 'Stockholm'),
+  ('Test1 AB', 'DEF456', 11111, 'Goteborg'),
+  ('Test2 AB', 'GHI789', 11111, 'Malmo');
