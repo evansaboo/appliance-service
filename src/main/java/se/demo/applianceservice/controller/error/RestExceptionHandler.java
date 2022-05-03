@@ -22,7 +22,7 @@ public class RestExceptionHandler {
         ErrorResponse response  = ErrorResponse.builder()
                 .error("ENTITY_NOT_FOUND")
                 .message(ex.getMessage())
-                .timeStamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now())
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
@@ -30,12 +30,12 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(value = {DataAccessException.class})
     public ResponseEntity<ErrorResponse> handleDataAccessException(DataAccessException ex) {
-        log.error("handleEntityNotFoundException(), Exception: ", ex);
+        log.error("handleDataAccessException(), Exception: ", ex);
 
         ErrorResponse response  = ErrorResponse.builder()
                 .error("DATABASE_ERROR")
                 .message(ex.getMessage())
-                .timeStamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now())
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);

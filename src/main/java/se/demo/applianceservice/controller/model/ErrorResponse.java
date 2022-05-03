@@ -7,5 +7,5 @@ import java.time.LocalDateTime;
 @Builder
 public record ErrorResponse(String error,
                             String message,
-                            LocalDateTime timeStamp) {
+                            LocalDateTime timestamp) {
 }

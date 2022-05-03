@@ -11,6 +11,7 @@ import se.demo.applianceservice.repository.CustomerFacade;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -33,6 +34,9 @@ public class ConnectionStatusService {
     public void updateApplianceStatus(String applianceId) {
         log.debug("updateApplianceStatus(), applianceId: {}", applianceId);
 
+        // Check if appliance exists in the database
+        getApplianceById(applianceId);
+
         applianceFacade.updateApplianceStatus(applianceId);
 
         log.debug("updateApplianceStatus(), done.");
@@ -41,8 +45,7 @@ public class ConnectionStatusService {
     public ApplianceStatusResponse getApplianceConnectionStatus(String applianceId) {
         log.debug("getApplianceConnectionStatus(), applianceId: {}", applianceId);
 
-        Optional<Appliance> applianceOptional = applianceFacade.getApplianceStatus(applianceId).stream().findFirst();
-        Appliance appliance = getAppliance(applianceOptional, applianceId);
+        Appliance appliance = getApplianceById(applianceId);
 
         ApplianceStatusResponse response = ApplianceStatusResponse.builder()
                 .applianceId(appliance.applianceId())
@@ -54,9 +57,11 @@ public class ConnectionStatusService {
         return response;
     }
 
-    private Appliance getAppliance(Optional<Appliance> appliance, String applianceId) {
-        if (appliance.isPresent()) {
-            return appliance.get();
+    private Appliance getApplianceById(String applianceId) {
+        List<Appliance> appliances = applianceFacade.getApplianceStatus(applianceId);
+
+        if (appliances.size() > 0) {
+            return appliances.get(0);
         } else {
             throw new EntityNotFoundException("Couldn't find appliance with ID: " + applianceId);
         }
