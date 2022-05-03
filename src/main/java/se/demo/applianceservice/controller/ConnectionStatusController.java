@@ -10,7 +10,7 @@ import se.demo.applianceservice.service.ConnectionStatusService;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/connection")
+@RequestMapping("/api/appliance")
 public class ConnectionStatusController {
 
     @Autowired
