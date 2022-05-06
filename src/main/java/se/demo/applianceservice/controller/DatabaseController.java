@@ -14,9 +14,12 @@ import se.demo.applianceservice.service.DatabaseService;
 @RequestMapping("/api/database")
 public class DatabaseController {
 
-    @Autowired
-    DatabaseService databaseService;
+    private final DatabaseService databaseService;
 
+    @Autowired
+    public DatabaseController(DatabaseService databaseService) {
+        this.databaseService = databaseService;
+    }
     @PutMapping("table/create/customer-and-appliance")
     public ResponseEntity<RestResponse> createCustomerAndApplianceTable() {
         log.info("createCustomerAndApplianceTable()");

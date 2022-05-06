@@ -15,10 +15,15 @@ import java.util.Map;
 public class CustomerFacade {
 
     private String createCustomerTableSql;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final FileReader fileReader;
+
     @Autowired
-    private NamedParameterJdbcTemplate jdbcTemplate;
-    @Autowired
-    private FileReader fileReader;
+    public CustomerFacade(NamedParameterJdbcTemplate jdbcTemplate,
+                          FileReader fileReader) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.fileReader = fileReader;
+    }
 
     @EventListener(ApplicationReadyEvent.class)
     public void loadSqlStatements() {

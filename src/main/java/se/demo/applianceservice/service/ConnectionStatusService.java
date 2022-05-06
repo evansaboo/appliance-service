@@ -17,18 +17,12 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class ConnectionStatusService {
+
+    private final ApplianceFacade applianceFacade;
+
     @Autowired
-    private CustomerFacade customerFacade;
-    @Autowired
-    private ApplianceFacade applianceFacade;
-
-    public void generateCustomersAndAppliances() {
-        log.debug("generateCustomersAndAppliances().");
-
-        customerFacade.createCustomerTable();
-        applianceFacade.createApplianceTable();
-
-        log.debug("generateCustomersAndAppliances(), done.");
+    public ConnectionStatusService(ApplianceFacade applianceFacade) {
+        this.applianceFacade = applianceFacade;
     }
 
     public void updateApplianceStatus(String applianceId) {

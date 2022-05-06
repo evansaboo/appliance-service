@@ -16,7 +16,6 @@ public class FileReader {
             Path path = Path.of("src/main/resources/sql", filename);
             return Files.readString(path, StandardCharsets.US_ASCII);
         } catch (IOException e) {
-            /* Should be handled by RestExceptionHandler */
             throw new RuntimeException(e);
         }
     }

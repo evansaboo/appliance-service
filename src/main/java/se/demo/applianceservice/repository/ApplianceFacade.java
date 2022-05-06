@@ -23,12 +23,15 @@ public class ApplianceFacade {
     private String createApplianceTableSql;
     private String updateApplianceStatusSql;
     private String getApplianceInfoSql;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final FileReader fileReader;
 
     @Autowired
-    private NamedParameterJdbcTemplate jdbcTemplate;
-    @Autowired
-    private FileReader fileReader;
-
+    public ApplianceFacade(NamedParameterJdbcTemplate jdbcTemplate,
+                           FileReader fileReader) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.fileReader = fileReader;
+    }
     @EventListener(ApplicationReadyEvent.class)
     public void loadSqlStatements() {
         log.debug("loadSqlStatements()");

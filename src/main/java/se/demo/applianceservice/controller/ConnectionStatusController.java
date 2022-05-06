@@ -13,8 +13,12 @@ import se.demo.applianceservice.service.ConnectionStatusService;
 @RequestMapping("/api/appliance")
 public class ConnectionStatusController {
 
+    private final ConnectionStatusService connectionService;
+
     @Autowired
-    private ConnectionStatusService connectionService;
+    public ConnectionStatusController(ConnectionStatusService connectionService) {
+        this.connectionService = connectionService;
+    }
 
     @PostMapping("{applianceId}/acknowledge-ping")
     public ResponseEntity<RestResponse> acknowledgeAppliancePing(@PathVariable("applianceId") String applianceId) {
@@ -35,5 +39,4 @@ public class ConnectionStatusController {
 
         return ResponseEntity.ok(response);
     }
-
 }
